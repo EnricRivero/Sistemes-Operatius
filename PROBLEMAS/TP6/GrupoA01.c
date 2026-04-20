@@ -52,7 +52,7 @@ int main(void)
         sense_vocals[i] = '\0';
         
         /* Escriure dades */
-        write(fd[1],missatge, sizeof(missatge));
+        write(fd[1],sense_vocals, sizeof(sense_vocals));
         /* Enviar senyal */
         kill(parent_pid,SIGUSR2);
         /* Esperar senyal */
@@ -95,11 +95,11 @@ int main(void)
         pause();
 
         /* Llegir dades */
-        read(fd[0],sense_vocals,sizeof(sense_vocals));
+        read(fd[0],missatge,sizeof(missatge));
         printf("[pare] Cadena sense vocals rebuda: %s", missatge);
 
         /* Escriure dades */
-        write(fd[1],sense_vocals,sizeof(sense_vocals));
+        write(fd[1],missatge,sizeof(missatge));
 
         /* Enviar senyal */
         kill(child_pid, SIGUSR1);
