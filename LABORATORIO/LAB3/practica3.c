@@ -69,45 +69,43 @@ int main (int argc, char * argv[]){
 
     parent_id = getpid();
     north_id = fork();
+    south_id = fork();
+    for (int i = 1; i <= anys ; i++){
 
-    if (north_id == 0) { // Fill Nord
-
-        // Tanquem els pipes que no fem servir
-        close(p_north[1]);
-        close(p_south[0]); close(p_south[1]);
-        close(p_northBack[0]);
-        close(p_southBack[0]); close(p_southBack[1]);
-
-        signal(SIGUSR1, senyalnord);
-
-        // TO DO
-
-    } else {
-        south_id = fork();
-        if (south_id == 0) { // Fill Sud
+        if (north_id == 0) { // Fill Nord
 
             // Tanquem els pipes que no fem servir
-            close(p_south[1]);
-            close(p_north[0]); close(p_north[1]);
-            close(p_sudBack[0]);
-            close(p_northBack[0]); close(p_northBack[1]);
+            close(p_north[1]);
+            close(p_south[0]); close(p_south[1]);
+            close(p_northBack[0]);
+            close(p_southBack[0]); close(p_southBack[1]);
 
-            signal(SIGUSR1, senyalsud);
+            signal(SIGUSR1, senyalnord);
 
             // TO DO
+
+        } else if(south_id == 0){
+
+                // Tanquem els pipes que no fem servir
+                close(p_south[1]);
+                close(p_north[0]); close(p_north[1]);
+                close(p_southBack[0]);
+                close(p_northBack[0]); close(p_northBack[1]);
+
+                signal(SIGUSR1, senyalsud);
 
         } else { // Pare
 
-            // Tanquem els pipes que no fem servir
-            close(p_north[0]);
-            close(p_south[0]);
-            close(p_northBack[1]);
-            close(p_southBack[1]);
+                // Tanquem els pipes que no fem servir
+                close(p_north[0]);
+                close(p_south[0]);
+                close(p_northBack[1]);
+                close(p_southBack[1]);
 
-            // TO DO
+                // TO DO
 
-            waitpid(north_id, NULL, 0);
-            waitpid(south_id, NULL, 0);
+                waitpid(north_id, NULL, 0);
+                waitpid(south_id, NULL, 0);
         }
     }
 
