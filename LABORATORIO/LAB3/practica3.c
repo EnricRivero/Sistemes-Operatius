@@ -75,7 +75,7 @@ double retorna_limit(double deposit, double lim_a, double lim_b, double lim_m){
   
 }
 
-// PROCESO DE LOS HIJOS
+// Calcula la demanda en funció del límit.
 double proceso_hijo(double limit){
     // Falta implementar!
     return 0.0;
@@ -174,13 +174,15 @@ int main (int argc, char * argv[]){
                 limit = retorna_limit(diposit, lim_a, lim_b, lim_m);
                 printf("[Coordinador] Límit aplicat aquest any: %lf \n",diposit);
                 write(p_north[1], &limit, sizeof(double));
+
+
                 //S'envia senyal a fill
                 kill(north_id,SIGUSR1);
-                // Desbloquejem Senyals i esperem a rebre resposta del fill:
+                // Desbloqueja Senyals i espera a rebre resposta del fill:
                 while(!rebut_pare){
                     sigsuspend(&oldmask);
                 }
-                // Un cop reprès el control, recuperem el valor inicial:
+                // Un cop reprès el control, es recupera el valor inicial:
                 rebut_pare = 0;
                 
                 //Llegeix l'extracció del Nord
@@ -199,7 +201,12 @@ int main (int argc, char * argv[]){
                 write(p_south[1], &limit, sizeof(double));
 
                 kill(south_id,SIGUSR2);
-                pause();
+
+                // Es repeteix el procés de les mascàres
+                while(!rebut_pare){
+                    sigsuspend(&oldmask);
+                }
+                rebut_pare = 0;
                 
                 //Llegeix l'extracció del sud
                 read(p_southBack[0], &extraccio, sizeof(double));
