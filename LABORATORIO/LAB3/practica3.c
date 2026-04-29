@@ -108,7 +108,7 @@ int main (int argc, char * argv[]){
         south_id = fork(); [cite: 30]
     }
 
-    if (north_id == 0) { // --- UNIVERSO FILL NORD ---
+    if (north_id == 0) { // --- FILL NORD ---
         // Tanquem els pipes que no fem servir (Norte solo usa p_north y p_northBack)
         close(p_south[0]); close(p_south[1]);
         close(p_southBack[0]); close(p_southBack[1]);
@@ -133,7 +133,7 @@ int main (int argc, char * argv[]){
         }
         exit(0);
 
-    } else if (south_id == 0) { // --- UNIVERSO FILL SUD ---
+    } else if (south_id == 0) { // --- FILL SUD ---
         // Tanquem els pipes que no fem servir
         close(p_north[0]); close(p_north[1]);
         close(p_northBack[0]); close(p_northBack[1]);
@@ -158,7 +158,7 @@ int main (int argc, char * argv[]){
         }
         exit(0);
 
-    } else { // --- UNIVERSO PARE (COORDINADOR) ---
+    } else { // --- PARE (COORDINADOR) ---
         // Tanquem els pipes que no fem servir
         close(p_north[0]); close(p_south[0]);
         close(p_northBack[1]); close(p_southBack[1]);
