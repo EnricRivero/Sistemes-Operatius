@@ -11,8 +11,6 @@ typedef struct {
  float life_expectancy;
 } LifeRecord;
 
-LifeRecord *records = NULL;
-int total_records = 0;
 
 int comparar_per_any(const void *a, const void *b) {
     const LifeRecord *ra = (const LifeRecord *)a;
@@ -20,31 +18,85 @@ int comparar_per_any(const void *a, const void *b) {
     return ra->year - rb->year;
 }
 
-void ordenar() {
+void ordenar(LifeRecord *records, int total_records) {
     qsort(records, total_records, sizeof(LifeRecord), comparar_per_any);
 
     int limit = total_records < 10 ? total_records : 10;
     printf("%-40s %-8s %-6s %s\n", "País", "Código", "Año", "Esperanza de vida");
     printf("--------------------------------------------------------------------\n");
     for (int i = 0; i < limit; i++) {
-        printf("%-40s %-8s %-6d %.2f\n", records[i].country, records[i].code, records[i].year, records[i].life_expectancy);
+        printf("%-40s %-8s %-6d %.2f\n", records[i].country, records[i].code, records[i].year,records[i].life_expectancy);
     }
 }
 
-void modo_malloc(char *archivo,int sortTrue){
+void modo_malloc(char *archivo,int sortTrue,int *total_records ,LifeRecord** records){
         
         //1. Reservar memoria inicial para 100 registros.
-        LifeRecord * array = (LifeRecord *) malloc(100*sizeof(LifeRecord));
+        LifeRecord *array = (LifeRecord *) malloc(100*sizeof(LifeRecord));
+
         //2. Leer cada línea mediante fgets.
-        //
-        //3. Parsear datos usando strtok.
-        //4. Si la memoria se llena, duplicar la capacidad mediante realloc.
-        //5. Guardar los registros en memoria.
+        FILE *f = fopen(archivo,"r");
+        int it, mida;
+        char *st;
+        it =  0;
+        mida = 100;
+
+        char * linia = (char*) malloc(100*sizeof(char));
+
         //6. Continuar hasta finalizar el fichero.
-        
+        while(fgets(linia,100,f)!= NULL){
+
+            //4.Si la memoria se llena, duplicar la capacidad mediante realloc.
+            if(it == mida){
+                mida = mida*2;
+                array = realloc(array,mida*sizeof(LifeRecord));
+            }
+            //3. Parsear datos usando strtok.
+            for (int i = 0; i <4; i++){
+                switch(i){
+
+                    case 0:
+                        st = strtok(linia,",");
+
+                        //5. Guardar los registros en memoria.
+                        for(int j = 0; st[j] != '\0'; j++){
+                            array[it].country[j] = st[j];
+                        }
+                        break;
+
+                    case 1:
+
+                        st = strtok(NULL,",");
+                        //5. Guardar los registros en memoria.
+                         for(int j = 0; st[j] != '\0'; j++){
+                            array[it].code[j] = st[j];
+                        }
+                        break;
+                    case 2:
+
+                        st = strtok(NULL,",");
+                        //5. Guardar los registros en memoria.
+                        array[it].year  = atoi(st);
+                        break;
+
+                    case 3:
+
+                        st = strtok(NULL,",");
+                        //5. Guardar los registros en memoria.
+                        array[it].life_expectancy = atof(st);
+                        break;
+                }
+            }
+            it++;
+         }  
+        *total_records= mida; 
+        if(sortTrue){
+            ordenar(array,mida);
+        }
+        *records = array;
 }
 
-void modo_mmap(char *archivo, int sortTrue){
+void modo_mmap(char *archivo, int sortTrue, int *total_records, LifeRecord ** records){
         /*
         1. Abrir fichero con open().
         2. Obtener tamaño con fstat().
@@ -66,14 +118,16 @@ int main (int argc, char * argv[]){
     char *modo = argv[1]; // Mode malloc o mmap
     char *archivo = argv[2]; // Archiu .csv amb les dades
     int sortTrue = 0;
+    LifeRecord *records;
+    int total_records;
 
     if(argc == 4) sortTrue = 1;
 
     if (strcmp(modo, "malloc") == 0) {
-        modo_malloc(archivo,sortTrue);
+        modo_malloc(archivo, sortTrue, &total_records, &records);
 
     } else if (strcmp(modo, "mmap") == 0) {
-        modo_mmap(archivo,sortTrue);
+        modo_mmap(archivo,sortTrue, &total_records , &records);
         
     } else {
         printf("Modo '%s' no existe. Usa 'malloc' o 'mmap'.\n", modo);
