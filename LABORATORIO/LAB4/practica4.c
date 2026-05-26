@@ -57,8 +57,9 @@ void modo_malloc(char *archivo,int sortTrue,int *total_records ,LifeRecord** rec
 
             //4.Si la memoria se llena, duplicar la capacidad mediante realloc.
             if(it == mida){
-                mida = mida*2;
+                
                 array = realloc(array,mida*sizeof(LifeRecord));
+                mida = mida *2;
             }
             //3. Parsear datos usando strtok.
             for (int i = 0; i <4; i++){
