@@ -11,7 +11,16 @@ typedef struct {
  float life_expectancy;
 } LifeRecord;
 
-
+void inicialitzar_max_min(LifeRecord * max, LifeRecord * min){
+        min->country[0] ='-';
+        min->code[0] = '-';
+        min->year = 0;
+        min->life_expectancy = 10000000;
+        max->country[0] = '-';
+        max->code[0] = '-';
+        max->year = 0;
+        max->life_expectancy = 0;
+}
 int comparar_per_any(const void *a, const void *b) {
     const LifeRecord *ra = (const LifeRecord *)a;
     const LifeRecord *rb = (const LifeRecord *)b;
@@ -88,8 +97,45 @@ void modo_malloc(char *archivo,int sortTrue,int *total_records ,LifeRecord** rec
                 }
             }
             it++;
-         }  
-        *total_records= mida; 
+        }
+        LifeRecord max, min;
+        float mean = 0.0;
+
+        max = array[0];
+        min = array[0];
+        mean += array[0].life_expectancy;
+
+        for (int i = 1; i < it+1 ; i++){
+            if(array[i].life_expectancy > max.life_expectancy) max = array[i];
+            if(array[i].life_expectancy < min.life_expectancy) min = array[i];
+            mean += array[i].life_expectancy;
+        }
+
+        mean = mean/(it+1);
+
+        printf(" Total registres: %d\n Mitja global: %f\n ",it+1,mean);
+        printf("Major Valor: %s (%d) ->  %f\n",max.country,max.year,max.life_expectancy);
+        printf("Menor Valor: %s (%d) ->  %f\n",min.country,min.year,min.life_expectancy);
+        
+        int anyIntro,index;
+        inicialitzar_max_min(&max,&min);
+        mean = 0.0;
+        index = 0;
+
+        printf("Introdueix un any: ");
+        scanf("%d",&anyIntro);
+        for(int i = 0; i < it+1 ; i++){
+            if(array[i].year == anyIntro){
+                if(array[i].life_expectancy > max.life_expectancy) max = array[i];
+                if(array[i].life_expectancy < min.life_expectancy) min = array[i];
+                mean += array[i].life_expectancy;
+                index++;
+            }
+        }
+
+
+        *total_records= mida;
+
         if(sortTrue){
             ordenar(array,mida);
         }
