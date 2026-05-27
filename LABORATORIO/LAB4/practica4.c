@@ -151,12 +151,22 @@ void modo_malloc(char *archivo,int sortTrue,int *total_records ,LifeRecord** rec
 void modo_mmap(char *archivo, int sortTrue, int *total_records, LifeRecord ** records){
         
         //1. Abrir fichero con open().
-        int fd,size;
+        int fd;
         struct stat st;
+        char *linia;
         fd = open(archivo,O_RDONLY);
         //2. Obtener tamaño con fstat().
+        if(fstat(fd,&st) == -1){
+            perror("fstat");
+            return;
+        }
         //3. Mapear fichero con mmap().
-        //4. Recorrer memoria detectando saltos de línea.
+        char *dades = mmap(NULL,st.st_size,PROT_READ,MAP_PRIVATE,fd,0);
+
+
+        //4. Recorrer memoria detectando saltos de línea. 
+        linia = (char*) malloc(100*sizeof(char));
+
         //5. Parsear cada línea.
         //6. Liberar memoria con munmap(). 
         
