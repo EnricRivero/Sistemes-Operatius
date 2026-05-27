@@ -2,7 +2,11 @@
 #include<stdlib.h>
 #include<ctype.h>
 #include<unistd.h>
+#include<sys/mman.h>
+#include<sys/stat.h>
 #include<string.h>
+#include <fcntl.h>
+
 
 typedef struct {
  char country[64];
@@ -141,17 +145,21 @@ void modo_malloc(char *archivo,int sortTrue,int *total_records ,LifeRecord** rec
             ordenar(array,mida);
         }
         *records = array;
+        fclose(f);
 }
 
 void modo_mmap(char *archivo, int sortTrue, int *total_records, LifeRecord ** records){
-        /*
-        1. Abrir fichero con open().
-        2. Obtener tamaño con fstat().
-        3. Mapear fichero con mmap().
-        4. Recorrer memoria detectando saltos de línea.
-        5. Parsear cada línea.
-        6. Liberar memoria con munmap(). 
-        */
+        
+        //1. Abrir fichero con open().
+        int fd,size;
+        struct stat st;
+        fd = open(archivo,O_RDONLY);
+        //2. Obtener tamaño con fstat().
+        //3. Mapear fichero con mmap().
+        //4. Recorrer memoria detectando saltos de línea.
+        //5. Parsear cada línea.
+        //6. Liberar memoria con munmap(). 
+        
 }
 
 int main (int argc, char * argv[]){
